@@ -198,7 +198,7 @@ class Game:
             self.food = self.spawn_food()
             self.player2.score += 5
             self.player2.grow()
-        def reset_round(self):
+    def reset_round(self):
         # Reset snake positions and health
         self.player1 = Snake({'x': 5, 'y': SCREEN_HEIGHT // SNAKE_UNIT_SIZE // 2}, MOVE_RIGHT, COLOR_GOLD_YELLOW)
         self.player1.health = 100
