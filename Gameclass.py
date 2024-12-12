@@ -138,7 +138,7 @@ class Game:
                         self.player2.move_direction = MOVE_DOWN
                     elif event.key == pygame.K_RIGHT and self.player2.move_direction != MOVE_LEFT:
                         self.player2.move_direction = MOVE_RIGHT
-        def update_game(self):
+    def update_game(self):
         """
         Updates the positions and checks for collisions and game logic.
         """
@@ -198,3 +198,16 @@ class Game:
             self.food = self.spawn_food()
             self.player2.score += 5
             self.player2.grow()
+        def reset_round(self):
+        # Reset snake positions and health
+        self.player1 = Snake({'x': 5, 'y': SCREEN_HEIGHT // SNAKE_UNIT_SIZE // 2}, MOVE_RIGHT, COLOR_GOLD_YELLOW)
+        self.player1.health = 100
+        self.player2 = Snake({'x': SCREEN_WIDTH // SNAKE_UNIT_SIZE - 5, 'y': SCREEN_HEIGHT // SNAKE_UNIT_SIZE // 2},
+                             MOVE_LEFT,
+                             COLOR_RED_ORANGE)
+        self.player2.health = 100
+        # Reset food and health potions
+        self.food = self.spawn_food()
+        self.health_potions_list.clear()
+        self.last_potion_spawn_time = time.time()
+    
