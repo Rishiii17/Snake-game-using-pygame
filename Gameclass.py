@@ -138,4 +138,63 @@ class Game:
                         self.player2.move_direction = MOVE_DOWN
                     elif event.key == pygame.K_RIGHT and self.player2.move_direction != MOVE_LEFT:
                         self.player2.move_direction = MOVE_RIGHT
-    
+        def update_game(self):
+        """
+        Updates the positions and checks for collisions and game logic.
+        """
+        self.spawn_health_potions()
+        self.player1.update_position()
+        self.player2.update_position()
+
+        # Check for collisions with walls and reverse direction if hit
+        if self.player1.body_parts[0]['x'] <= 0:
+            self.player1.health -= 5  # Reduce health
+        elif self.player1.body_parts[0]['x'] >= SCREEN_WIDTH // SNAKE_UNIT_SIZE:
+            self.player1.health -= 5
+        if self.player1.body_parts[0]['y'] <= 0:
+            self.player1.health -= 5
+        elif self.player1.body_parts[0]['y'] >= SCREEN_HEIGHT // SNAKE_UNIT_SIZE:
+            self.player1.health -= 5
+
+        if self.player2.body_parts[0]['x'] <= 0:
+            self.player2.health -= 5
+        elif self.player2.body_parts[0]['x'] >= SCREEN_WIDTH // SNAKE_UNIT_SIZE:
+            self.player2.health -= 5
+        if self.player2.body_parts[0]['y'] <= 0:
+            self.player2.health -= 5
+        elif self.player2.body_parts[0]['y'] >= SCREEN_HEIGHT // SNAKE_UNIT_SIZE:
+            self.player2.health -= 5
+
+        # End the game if any player's health reaches zero
+        if self.player1.health <= 0 or self.player2.health <= 0:
+            self.save_scores()  # Save the scores at the end of the round
+            if self.current_round < self.round_count:
+                self.current_round += 1
+                self.reset_round()
+            else:
+                self.is_game_over = True
+
+        # Handle collision with health potions
+        for potion in self.health_potions_list[:]:
+            if self.player1.check_collision(potion.position):
+                self.health_potions_list.remove(potion)
+                self.player1.health = min(self.player1.health + 30, 100)
+            elif self.player2.check_collision(potion.position):
+                self.health_potions_list.remove(potion)
+                self.player2.health = min(self.player2.health + 30, 100)
+
+        # Check for collisions with each other
+        if self.player1.body_parts[0] in self.player2.body_parts:
+            self.player1.health -= 5
+        if self.player2.body_parts[0] in self.player1.body_parts:
+            self.player2.health -= 5
+
+        if self.player1.check_collision(self.food):
+            self.food = self.spawn_food()
+            self.player1.score += 5
+            self.player1.grow()
+
+        if self.player2.check_collision(self.food):
+            self.food = self.spawn_food()
+            self.player2.score += 5
+            self.player2.grow()
